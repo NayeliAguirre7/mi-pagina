@@ -152,6 +152,10 @@
       // Ordenar los datos de mayor a menor por Índice
       filtrados.sort((a, b) => parseFloat(b["Índice"]) - parseFloat(a["Índice"]));
 
+      // Ajustar altura del canvas dinámicamente
+      const canvas = document.getElementById("grafica");
+      canvas.height = filtrados.length * 30;
+
       // Ahora sí, extraer etiquetas y valores ya ordenados
       const etiquetas = filtrados.map(row => row["Metrópoli"]);
       const valores = filtrados.map(row => parseFloat(row["Índice"]));
