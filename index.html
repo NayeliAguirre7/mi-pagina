@@ -18,6 +18,9 @@
       background-color: #2c3e50;
       color: white;
       padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
     }
 
     .navbar-title {
@@ -40,17 +43,46 @@
       text-decoration: underline;
     }
 
-    /* Contenido principal */
-    .content {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 80vh;
+    .navbar-menu a:active {
+      color: #1abc9c;
     }
 
-    .content h1 {
-      font-size: 4rem;
+    /* Secciones */
+    section {
+      padding: 5rem 2rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    h1 {
+      font-size: 3rem;
       color: #333;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      font-size: 1.1rem;
+      color: #555;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .navbar-menu {
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-top: 0.5rem;
+      }
+
+      .navbar-title {
+        margin-bottom: 0.5rem;
+      }
     }
   </style>
 </head>
@@ -60,17 +92,33 @@
   <div class="navbar">
     <div class="navbar-title">Revisión ICS 2025</div>
     <div class="navbar-menu">
-      <a href="#">Resultados</a>
-      <a href="#">Indicadores</a>
-      <a href="#">Evolución</a>
-      <a href="#">Ciudades</a>
+      <a href="#resultados">Resultados</a>
+      <a href="#indicadores">Indicadores</a>
+      <a href="#evolucion">Evolución</a>
+      <a href="#ciudades">Ciudades</a>
     </div>
   </div>
 
-  <!-- Contenido central -->
-  <div class="content">
-    <h1>Sitio en construcción</h1>
-  </div>
+  <!-- Secciones -->
+  <section id="resultados">
+    <h1>Resultados</h1>
+    <p>Contenido de la sección Resultados.</p>
+  </section>
+
+  <section id="indicadores">
+    <h1>Indicadores</h1>
+    <p>Contenido de la sección Indicadores.</p>
+  </section>
+
+  <section id="evolucion">
+    <h1>Evolución</h1>
+    <p>Contenido de la sección Evolución.</p>
+  </section>
+
+  <section id="ciudades">
+    <h1>Ciudades</h1>
+    <p>Contenido de la sección Ciudades.</p>
+  </section>
 
 </body>
 </html>
