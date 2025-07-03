@@ -149,8 +149,13 @@
 
       const filtrados = datos.filter(row => row["Año"] === anio && row["ODS"] === ods);
 
+      // Ordenar los datos de mayor a menor por Índice
+    filtrados.sort((a, b) => parseFloat(b["Índice"]) - parseFloat(a["Índice"]));
+
+      // Ahora sí, extraer etiquetas y valores ya ordenados
       const etiquetas = filtrados.map(row => row["Metrópoli"]);
       const valores = filtrados.map(row => parseFloat(row["Índice"]));
+
 
       const ctx = document.getElementById("grafica").getContext("2d");
 
