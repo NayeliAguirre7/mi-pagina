@@ -28,6 +28,19 @@
       font-weight: bold;
     }
 
+   .navbar-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+    text-decoration: none;
+    }
+
+   .icono {
+    width: 24px;
+    height: 24px;
+    }
+
     .navbar-menu {
       display: flex;
       gap: 1.5rem;
@@ -97,7 +110,10 @@
   <!-- Barra de navegación -->
   <div class="navbar">
     <div class="navbar-title">
-    <a href="index.html" style="color: white; text-decoration: none;">Revisión ICS 2025</a>
+  <a href="index.html" class="navbar-link">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/3/3f/Logo_UN_SDG.svg" alt="Icono" class="icono">
+    Revisión ICS 2025
+    </a>
     </div>
     <div class="navbar-menu">
       <a href="resultados.html">Resultados</a>
