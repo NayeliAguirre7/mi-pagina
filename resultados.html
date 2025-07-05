@@ -137,8 +137,8 @@
     let graficaBarras, graficaLineas;
 
     function actualizarFiltros() {
-      const anios = [...new Set(datos.map(d => d["Año"]))].sort();
-      const ods = [...new Set(datos.map(d => d["ODS"]))].sort();
+      const anios = [...new Set(datos.map(row => row["Año"]))].sort();
+      const ods = [...new Set(datos.map(row => row["ODS"]))].sort();
 
       const selAnio = document.getElementById("filtro-anio");
       const selOds = document.getElementById("filtro-ods");
