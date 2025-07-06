@@ -161,6 +161,8 @@
 
       // Gráfica de barras
       const ordenados = [...datosFiltrados].sort((a, b) => parseFloat(b["Índice"]) - parseFloat(a["Índice"]));
+      const canvas = document.getElementById("grafica-barras");
+      canvas.height = ordenados.length * 40;
       const etiquetas = ordenados.map(d => d["Metrópoli"]);
       const valores = ordenados.map(d => parseFloat(d["Índice"]));
       const colores = ordenados.map(d => d["Metrópoli"] === "Promedio" ? "#1f4e79" : "rgba(54, 162, 235, 0.6)");
