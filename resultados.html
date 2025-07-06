@@ -74,21 +74,19 @@
     }
 
     .scroll-area {
-       max-height: 500px;        /* Altura máxima visible */
+       max-height: 600px;        /* Altura máxima visible */
        overflow-y: auto;         /* Scroll vertical */
        overflow-x: hidden;       /* Evita scroll lateral */
        padding-right: 1rem;
        margin-top: 1rem;
-       width: 100%;
        border: 1px solid #ccc;
-       background: white;
-       padding: 1rem;
-       box-sizing: border-box;
+       background-color: white;
      }
 
      #grafica-barras {
-       min-width: 600px;
-       height: auto;
+       display: block;
+       width: 100% !important;
+       height: auto !important;
      }
 
     label {
@@ -174,7 +172,8 @@
       // Gráfica de barras
       const ordenados = [...datosFiltrados].sort((a, b) => parseFloat(b["Índice"]) - parseFloat(a["Índice"]));
       const canvas = document.getElementById("grafica-barras");
-      canvas.height = ordenados.length * 40;
+      const altoDeseado = ordenados.length * 40;
+      canvas.height = altoDeseado;
       const etiquetas = ordenados.map(d => d["Metrópoli"]);
       const valores = ordenados.map(d => parseFloat(d["Índice"]));
       const colores = ordenados.map(d => d["Metrópoli"] === "Promedio" ? "#1f4e79" : "rgba(54, 162, 235, 0.6)");
@@ -187,7 +186,8 @@
           datasets: [{
             label: "Índice por metrópoli",
             data: valores,
-            backgroundColor: colores
+            backgroundColor: colores,
+            barThickness: 30
           }]
         },
         options: {
