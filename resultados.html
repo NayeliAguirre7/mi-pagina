@@ -10,6 +10,7 @@
       background-color: #f4f4f4;
     }
 
+    /* Barra de navegación */
     .navbar {
       display: flex;
       justify-content: space-between;
@@ -46,43 +47,26 @@
       padding: 2rem;
     }
 
-    .filtros-globales {
-      display: flex;
-      justify-content: flex-end;
-      margin-bottom: 1rem;
-    }
-
-    .filtros-globales select {
-      padding: 0.5rem;
-      font-size: 1rem;
-    }
-
-    h2 {
-      margin-top: 2rem;
-      margin-bottom: 1rem;
+    h1 {
+      margin-bottom: 2rem;
       color: #2c3e50;
     }
 
-    .grafica-contenedor {
+    .filtros-grafica {
       display: flex;
+      flex-wrap: wrap;
       gap: 2rem;
       align-items: flex-start;
     }
 
-    .filtros-anio {
+    .filtros {
       min-width: 200px;
     }
 
-    .scroll-area {
-      overflow-y: auto;
-      max-height: 500px;
-      flex: 1;
-    }
-
     label {
-      font-weight: bold;
       display: block;
       margin-bottom: 0.5rem;
+      font-weight: bold;
     }
 
     select {
@@ -95,14 +79,23 @@
     canvas {
       max-width: 100%;
     }
+
+    @media (max-width: 768px) {
+      .filtros-grafica {
+        flex-direction: column;
+      }
+    }
   </style>
+
+  <!-- Chart.js y PapaParse -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
 </head>
 <body>
 
+  <!-- Barra de navegación -->
   <div class="navbar">
-    <a href="index.html" style="color: white; text-decoration: none;" class="navbar-title">Datos ICS 2023</a>
+    <a href="index.html" style="color: white; text-decoration: none;">Datos ICS 2023</a>
     <div class="navbar-menu">
       <a href="resultados.html">Resultados</a>
       <a href="indicadores.html">Indicadores</a>
@@ -110,35 +103,32 @@
     </div>
   </div>
 
+  <!-- Contenido -->
   <div class="container">
-    <div class="filtros-globales">
-      <select id="filtro-ods"></select>
-    </div>
+    <h1>Resultados generales y por subíndice</h1>
 
-    <h2>Resultados generales y por subíndice</h2>
-    <div class="grafica-contenedor">
-      <div class="filtros-anio">
+    <div class="filtros-grafica">
+      <div class="filtros">
         <label for="filtro-anio">Año</label>
         <select id="filtro-anio"></select>
-      </div>
-      <div class="scroll-area">
-        <canvas id="grafica-barras"></canvas>
-      </div>
-    </div>
 
-    <h2>Evolución en el tiempo</h2>
-    <div>
-      <canvas id="grafica-lineas"></canvas>
+        <label for="filtro-ods">ODS</label>
+        <select id="filtro-ods"></select>
+      </div>
+
+      <div style="flex: 1;">
+        <canvas id="grafica"></canvas>
+      </div>
     </div>
   </div>
 
   <script>
     let datos = [];
-    let graficaBarras, graficaLineas;
+    let grafica;
 
     function actualizarFiltros() {
-      const anios = [...new Set(datos.map(d => d["Año"]))].sort();
-      const ods = [...new Set(datos.map(d => d["ODS"]))].sort();
+      const anios = [...new Set(datos.map(row => row["Año"]))].sort();
+      const ods = [...new Set(datos.map(row => row["ODS"]))].sort();
 
       const selAnio = document.getElementById("filtro-anio");
       const selOds = document.getElementById("filtro-ods");
@@ -146,34 +136,44 @@
       selAnio.innerHTML = anios.map(a => `<option value="${a}">${a}</option>`).join("");
       selOds.innerHTML = ods.map(o => `<option value="${o}">${o}</option>`).join("");
 
-      selAnio.addEventListener("change", actualizarGraficas);
-      selOds.addEventListener("change", actualizarGraficas);
+      selAnio.addEventListener("change", dibujarGrafica);
+      selOds.addEventListener("change", dibujarGrafica);
 
-      actualizarGraficas();
+      dibujarGrafica(); // primera vez
     }
 
-    function actualizarGraficas() {
+    function dibujarGrafica() {
       const anio = document.getElementById("filtro-anio").value;
       const ods = document.getElementById("filtro-ods").value;
 
-      const datosFiltrados = datos.filter(d => d["Año"] === anio && d["ODS"] === ods);
-      const datosLineas = datos.filter(d => d["ODS"] === ods);
+      const filtrados = datos.filter(row => row["Año"] === anio && row["ODS"] === ods);
 
-      // Gráfica de barras
-      const ordenados = [...datosFiltrados].sort((a, b) => parseFloat(b["Índice"]) - parseFloat(a["Índice"]));
-      const etiquetas = ordenados.map(d => d["Metrópoli"]);
-      const valores = ordenados.map(d => parseFloat(d["Índice"]));
-      const colores = ordenados.map(d => d["Metrópoli"] === "Promedio" ? "#1f4e79" : "rgba(54, 162, 235, 0.6)");
+      // Ordenar los datos de mayor a menor por Índice
+      filtrados.sort((a, b) => parseFloat(b["Índice"]) - parseFloat(a["Índice"]));
 
-      if (graficaBarras) graficaBarras.destroy();
-      graficaBarras = new Chart(document.getElementById("grafica-barras"), {
+      // Ajustar altura del canvas dinámicamente
+      const canvas = document.getElementById("grafica");
+      canvas.height = filtrados.length * 10;
+
+      // Ahora sí, extraer etiquetas y valores ya ordenados
+      const etiquetas = filtrados.map(row => row["Metrópoli"]);
+      const valores = filtrados.map(row => parseFloat(row["Índice"]));
+
+
+      const ctx = document.getElementById("grafica").getContext("2d");
+
+      if (grafica) grafica.destroy();
+
+      grafica = new Chart(ctx, {
         type: "bar",
         data: {
           labels: etiquetas,
           datasets: [{
-            label: "Índice por metrópoli",
+            label: `Índice por metrópoli`,
             data: valores,
-            backgroundColor: colores
+            backgroundColor: "rgba(54, 162, 235, 0.6)",
+            borderColor: "rgba(54, 162, 235, 1)",
+            borderWidth: 1
           }]
         },
         options: {
@@ -183,36 +183,19 @@
             legend: { display: false }
           },
           scales: {
-            x: { beginAtZero: true, title: { display: true, text: "Índice" } },
-            y: { title: { display: true, text: "Metrópoli" } }
-          }
-        }
-      });
-
-      // Gráfica de líneas
-      const agrupados = {};
-      datosLineas.forEach(d => {
-        if (!agrupados[d["Metrópoli"]) agrupados[d["Metrópoli"]] = [];
-        agrupados[d["Metrópoli"]].push({ x: d["Año"], y: parseFloat(d["Índice"]) });
-      });
-
-      const datasets = Object.entries(agrupados).map(([nombre, puntos]) => ({
-        label: nombre,
-        data: puntos.sort((a, b) => a.x.localeCompare(b.x)),
-        borderWidth: 2,
-        fill: false
-      }));
-
-      if (graficaLineas) graficaLineas.destroy();
-      graficaLineas = new Chart(document.getElementById("grafica-lineas"), {
-        type: 'line',
-        data: { datasets },
-        options: {
-          responsive: true,
-          plugins: { legend: { display: true } },
-          scales: {
-            x: { title: { display: true, text: "Año" } },
-            y: { beginAtZero: true, title: { display: true, text: "Índice" } }
+            x: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: "Índice"
+              }
+            },
+            y: {
+              title: {
+                display: true,
+                text: "Metrópoli"
+              }
+            }
           }
         }
       });
