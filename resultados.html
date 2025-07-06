@@ -74,10 +74,12 @@
     }
 
     .scroll-area {
-      overflow-y: auto;
-      max-height: 500px;
-      flex: 1;
-    }
+       max-height: 500px;        /* Altura máxima visible */
+       overflow-y: auto;         /* Scroll vertical */
+       overflow-x: hidden;       /* Evita scroll lateral */
+       padding-right: 1rem;
+       margin-top: 1rem;
+     }
 
     label {
       font-weight: bold;
@@ -93,7 +95,7 @@
     }
 
     canvas {
-      max-width: 100%;
+      width: 100%;
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
