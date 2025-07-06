@@ -158,6 +158,7 @@
       // Ahora sí, extraer etiquetas y valores ya ordenados
       const etiquetas = filtrados.map(row => row["Metrópoli"]);
       const valores = filtrados.map(row => parseFloat(row["Índice"]));
+      const colores = ordenados.map(d => d["Metrópoli"] === "Promedio" ? "#1f4e79" : "rgba(54, 162, 235, 0.6)");
 
 
       const ctx = document.getElementById("grafica").getContext("2d");
