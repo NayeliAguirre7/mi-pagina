@@ -192,7 +192,7 @@
       // Gráfica de líneas
       const agrupados = {};
       datosLineas.forEach(d => {
-        if (!agrupados[d["Metrópoli"]) agrupados[d["Metrópoli"]] = [];
+        if (!agrupados[d["Metrópoli"]]) agrupados[d["Metrópoli"]] = [];
         agrupados[d["Metrópoli"]].push({ x: d["Año"], y: parseFloat(d["Índice"]) });
       });
 
