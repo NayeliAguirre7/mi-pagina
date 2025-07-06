@@ -74,20 +74,10 @@
     }
 
     .scroll-area {
-       max-height: 600px;        /* Altura máxima visible */
-       overflow-y: auto;         /* Scroll vertical */
-       overflow-x: hidden;       /* Evita scroll lateral */
-       padding-right: 1rem;
-       margin-top: 1rem;
-       border: 1px solid #ccc;
-       background-color: white;
-     }
-
-     #grafica-barras {
-       display: block;
-       width: 100% !important;
-       height: auto !important;
-     }
+      overflow-y: auto;
+      max-height: 500px;
+      flex: 1;
+    }
 
     label {
       font-weight: bold;
@@ -103,7 +93,7 @@
     }
 
     canvas {
-      width: 100%;
+      max-width: 100%;
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -147,8 +137,8 @@
     let graficaBarras, graficaLineas;
 
     function actualizarFiltros() {
-      const anios = [...new Set(datos.map(d => d["Año"]))].sort();
-      const ods = [...new Set(datos.map(d => d["ODS"]))].sort();
+      const anios = [...new Set(datos.map(row => row["Año"]))].sort();
+      const ods = [...new Set(datos.map(row => row["ODS"]))].sort();
 
       const selAnio = document.getElementById("filtro-anio");
       const selOds = document.getElementById("filtro-ods");
@@ -171,9 +161,6 @@
 
       // Gráfica de barras
       const ordenados = [...datosFiltrados].sort((a, b) => parseFloat(b["Índice"]) - parseFloat(a["Índice"]));
-      const canvas = document.getElementById("grafica-barras");
-      const altoDeseado = ordenados.length * 40;
-      canvas.height = altoDeseado;
       const etiquetas = ordenados.map(d => d["Metrópoli"]);
       const valores = ordenados.map(d => parseFloat(d["Índice"]));
       const colores = ordenados.map(d => d["Metrópoli"] === "Promedio" ? "#1f4e79" : "rgba(54, 162, 235, 0.6)");
@@ -186,8 +173,7 @@
           datasets: [{
             label: "Índice por metrópoli",
             data: valores,
-            backgroundColor: colores,
-            barThickness: 30
+            backgroundColor: colores
           }]
         },
         options: {
@@ -206,7 +192,7 @@
       // Gráfica de líneas
       const agrupados = {};
       datosLineas.forEach(d => {
-        if (!agrupados[d["Metrópoli"]]) agrupados[d["Metrópoli"]] = [];
+        if (!agrupados[d["Metrópoli"]) agrupados[d["Metrópoli"]] = [];
         agrupados[d["Metrópoli"]].push({ x: d["Año"], y: parseFloat(d["Índice"]) });
       });
 
